@@ -1,0 +1,24 @@
+{
+  "name": "phaser-project",
+  "version": "1.0.0",
+  "description": "This game follows code from: https://www.lesscake.com/phaser-game-tutorial",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dkihe/phaser-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dkihe/phaser-project/issues"
+  },
+  "homepage": "https://github.com/dkihe/phaser-project#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
