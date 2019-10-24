@@ -10,6 +10,8 @@ class main_scene extends Phaser.Scene {
 	}
 
 	create = () =>  {
+		// Create new Socket
+		this.socket = io();
 
 		// Create objects
 		this.score = 0;
