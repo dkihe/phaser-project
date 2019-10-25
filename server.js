@@ -8,13 +8,14 @@ let players = {}
 app.use(express.static(__dirname + '/src'))
 
 app.get('/', function (req, res) {
-    res.sendFile('/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 // Listen for incoming sockets
 io.on('connection', function (socket) {
     console.log('a user connected');
 
+    // Set object keys for connected player
     players[socket.id] = {
         rotation: 0,
         x: Math.floor(Math.random() * 700) + 50,
@@ -30,7 +31,7 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         // Remove this player from players object
-        delete players[docket.id]
+        delete players[socket.id]
         // Emit message to all players to remove this player
         io.emit('disconnect', socket.id)
 
