@@ -3,10 +3,13 @@ var app = express()
 var server = require('http').Server(app)
 var io = require('socket.io').listen(server)
 
+let portNum = 8081
 let players = {}
 
+// Middleware function that serves files at /src
 app.use(express.static(__dirname + '/src'))
 
+// Respond with index.html file when a GET request is made
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -18,10 +21,9 @@ io.on('connection', function (socket) {
     // Set object keys for connected player
     players[socket.id] = {
         rotation: 0,
-        x: Math.floor(Math.random() * 700) + 50,
-        y: Math.floor(Math.random() * 500) + 50,
+        x: Math.floor(Math.random() * 700) + 25,
+        y: Math.floor(Math.random() * 400) + 25,
         playerId: socket.id,
-        team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
     }
 
     // Send players object to new connection
@@ -39,7 +41,7 @@ io.on('connection', function (socket) {
     });
 });
 
-
-server.listen(8081, function () {
+// Listen on port 'portNum'
+server.listen(portNum, function () {
     console.log(`Listening on ${server.address().port}`);
 });
