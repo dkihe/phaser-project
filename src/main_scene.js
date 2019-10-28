@@ -39,6 +39,15 @@ class main_scene extends Phaser.Scene {
 			})
 		})
 
+		this.socket.on('playerMoved', function (playerInfo) {
+			self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+				if (playerInfo.playerId === otherPlayer.playerId) {
+					otherPlayer.setRotation(playerInfo.rotation);
+					otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+			  	}
+			});
+		});
+
 		// Create objects
 		this.score = 0;
 		let style = {
@@ -61,20 +70,35 @@ class main_scene extends Phaser.Scene {
 		// if (this.physics.overlap(this.player, this.coin)) {
 		// 	// this.hit();
 		// }
-
+		if (this.player) {
 		// Check if a direction is held down
-		if (this.arrow.right.isDown) {
-			this.player.x += 3;
-		} else if (this.arrow.left.isDown) {
-			this.player.x -= 3;
-		}
+			if (this.arrow.right.isDown) {
+				this.player.x += 3;
+			} else if (this.arrow.left.isDown) {
+				this.player.x -= 3;
+			}
 
-		if (this.arrow.down.isDown) {
-			this.player.y += 3;
-		} else if (this.arrow.up.isDown) {
-			this.player.y -= 3;
+			if (this.arrow.down.isDown) {
+				this.player.y += 3;
+			} else if (this.arrow.up.isDown) {
+				this.player.y -= 3;
+			}
+
+			this.physics.world.wrap(this.player, 5);
+
+			// emit player movement
+			var x = this.player.x;
+			var y = this.player.y;
+			if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
+				this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y, rotation: this.player.rotation });
+			}
+			
+			// save old position data
+			this.player.oldPosition = {
+				x: this.player.x,
+				y: this.player.y,
+			};
 		}
-		
 		// Show the players X and Y coordinates
 		// this.playerPosText.setText('Position: ' + this.player.x + ', ' + this.player.y)
 
