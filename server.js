@@ -23,8 +23,8 @@ io.on('connection', function (socket) {
     players[socket.id] = {
         x: Math.floor(Math.random() * 600) + 25,
         y: Math.floor(Math.random() * 300) + 25,
-        score: 0,
         playerId: socket.id,
+        score: 0,
     }
 
     coin = {

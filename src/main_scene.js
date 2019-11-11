@@ -13,8 +13,16 @@ class main_scene extends Phaser.Scene {
 		// Create new Socket
 		this.socket = io();
 		let self = this
+		let score = 0
+
+		let style = {
+			fontSize: '16px',
+			color: 'black',
+			fontFamily: 'arial',
+		}
 
 		this.otherPlayers = this.physics.add.group()
+		
 
 		this.socket.on('currentPlayers', function(players) {
 			//Check if player's id matches current player's socket id
@@ -48,11 +56,16 @@ class main_scene extends Phaser.Scene {
 			});
 		});
 
+		this.scoreText = this.add.text(16, 16, 'Score: ' + score, { fontSize: '16px', fill: '#FFFFFF' })
+		
 		this.socket.on('coinLocation', function (coinLocation) {
 			if (self.coin) self.coin.destroy();
 			self.coin = self.physics.add.image(coinLocation.x, coinLocation.y, 'coin');
 			self.physics.add.overlap(self.player, self.coin, function () {
 				this.socket.emit('coinCollected');
+				score += 10
+				this.scoreText.setText('Score: ' + score)
+				console.log(score)
 				self.tweens.add({
 					targets: self.player,
 					duration: 200,
@@ -62,14 +75,6 @@ class main_scene extends Phaser.Scene {
 				})
 			}, null, self);
 		});
-
-		// Create objects
-		// this.score = 0;
-
-		let style = {
-			font: '20px Arial',
-			fill: '#fff'
-		};
 
 		// this.player = this.physics.add.sprite(100, 100, 'player')
 		// this.coin = this.physics.add.sprite(300, 300, 'coin');
