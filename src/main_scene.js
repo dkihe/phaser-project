@@ -53,6 +53,13 @@ class main_scene extends Phaser.Scene {
 			self.coin = self.physics.add.image(coinLocation.x, coinLocation.y, 'coin');
 			self.physics.add.overlap(self.player, self.coin, function () {
 				this.socket.emit('coinCollected');
+				self.tweens.add({
+					targets: self.player,
+					duration: 200,
+					scaleX: 1.2,
+					scaleY: 1.2,
+					yoyo: true,
+				})
 			}, null, self);
 		});
 
@@ -117,27 +124,6 @@ class main_scene extends Phaser.Scene {
 		// this.playerPosText.setText('Position: ' + this.player.x + ', ' + this.player.y)
 
 	}
-}
-
-hit = (coin) => {
-
-	// Spawn Coin at a random location
-	coin.x = Phaser.Math.Between(100, 600);
-	coin.y = Phaser.Math.Between(100, 300);
-
-	// Increase Score by 10
-	// score += 10;
-
-	// text.setText('Score: ' + score);
-
-	// Simple animation added to player when colliding with coin
-	// this.tweens.add({
-	// 	targets: this.players,
-	// 	duration: 200,
-	// 	scaleX: 1.2,
-	// 	scaleY: 1.2,
-	// 	yoyo: true,
-	// })
 }
 
 addPlayer = (self, playerInfo) => {
