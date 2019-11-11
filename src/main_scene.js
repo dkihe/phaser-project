@@ -16,14 +16,6 @@ class main_scene extends Phaser.Scene {
 
 		this.otherPlayers = this.physics.add.group()
 
-		// Test Socket
-		this.socket.on('test', function(testArr) {
-			testArr.forEach(function(index){
-				console.log(index)
-			})
-		})
-
-
 		this.socket.on('currentPlayers', function(players) {
 			//Check if player's id matches current player's socket id
 			Object.keys(players).forEach(function(id) {
@@ -59,6 +51,7 @@ class main_scene extends Phaser.Scene {
 
 		// Create objects
 		this.score = 0;
+
 		let style = {
 			font: '20px Arial',
 			fill: '#fff'
@@ -74,16 +67,14 @@ class main_scene extends Phaser.Scene {
 	}
 
 	update = () => {
-
-		// Check if the Player collides with the coin
-		// if (this.physics.overlap(this.player, this.coin)) {
-		// 	this.hit();
-		// }
-
 		if (this.player) {
 			// Collide with Coin
 			if (this.physics.overlap(this.player, this.coin)) {
 				hit(this.coin)
+				// Increase Score by 10
+				this.score += 10;
+
+				this.scoreText.setText('Score: ' + this.score);
 			}
 			// Check if a direction is held down
 			if (this.arrow.right.isDown) {
@@ -119,16 +110,16 @@ class main_scene extends Phaser.Scene {
 	}
 }
 
-hit = (self) => {
+hit = (coin) => {
 
 	// Spawn Coin at a random location
-	self.x = Phaser.Math.Between(100, 600);
-	self.y = Phaser.Math.Between(100, 300);
+	coin.x = Phaser.Math.Between(100, 600);
+	coin.y = Phaser.Math.Between(100, 300);
 
 	// Increase Score by 10
-	// this.score += 10;
+	// score += 10;
 
-	// this.scoreText.setText('Score: ' + this.score);
+	// text.setText('Score: ' + score);
 
 	// Simple animation added to player when colliding with coin
 	// this.tweens.add({
