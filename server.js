@@ -5,6 +5,7 @@ var io = require('socket.io').listen(server)
 
 let portNum = 8081
 let players = {}
+let coin = {}
 
 // Middleware function that serves files at /src
 app.use(express.static(__dirname + '/src'))
@@ -20,14 +21,21 @@ io.on('connection', function (socket) {
 
     // Set object keys for connected player
     players[socket.id] = {
-        rotation: 0,
-        x: Math.floor(Math.random() * 700) + 25,
-        y: Math.floor(Math.random() * 400) + 25,
+        x: Math.floor(Math.random() * 600) + 25,
+        y: Math.floor(Math.random() * 300) + 25,
+        score: 0,
         playerId: socket.id,
+    }
+
+    coin = {
+        x: Math.floor(Math.random() * 600) + 15,
+        y: Math.floor(Math.random() * 300) + 15,
     }
 
     // Send players object to new connection
     socket.emit('currentPlayers', players)
+    // Send coin position to new connection
+    socket.emit('coinLocation', coin);
     // Update all other players of new connection
     socket.broadcast.emit('newPlayer', players[socket.id])
 
@@ -44,9 +52,13 @@ io.on('connection', function (socket) {
     socket.on('playerMovement', function (movementData) {
         players[socket.id].x = movementData.x;
         players[socket.id].y = movementData.y;
-        players[socket.id].rotation = movementData.rotation;
         // emit a message to all players about the player that moved
         socket.broadcast.emit('playerMoved', players[socket.id]);
+    });
+    socket.on('coinCollected', function () {
+        coin.x = Math.floor(Math.random() * 600) + 15;
+        coin.y = Math.floor(Math.random() * 300) + 15;
+        io.emit('coinLocation', coin);
     });
 });
 

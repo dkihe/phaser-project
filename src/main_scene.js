@@ -43,14 +43,21 @@ class main_scene extends Phaser.Scene {
 		this.socket.on('playerMoved', function (playerInfo) {
 			self.otherPlayers.getChildren().forEach(function (otherPlayer) {
 				if (playerInfo.playerId === otherPlayer.playerId) {
-					otherPlayer.setRotation(playerInfo.rotation);
 					otherPlayer.setPosition(playerInfo.x, playerInfo.y);
 			  	}
 			});
 		});
 
+		this.socket.on('coinLocation', function (coinLocation) {
+			if (self.coin) self.coin.destroy();
+			self.coin = self.physics.add.image(coinLocation.x, coinLocation.y, 'coin');
+			self.physics.add.overlap(self.player, self.coin, function () {
+				this.socket.emit('coinCollected');
+			}, null, self);
+		});
+
 		// Create objects
-		this.score = 0;
+		// this.score = 0;
 
 		let style = {
 			font: '20px Arial',
@@ -58,24 +65,24 @@ class main_scene extends Phaser.Scene {
 		};
 
 		// this.player = this.physics.add.sprite(100, 100, 'player')
-		this.coin = this.physics.add.sprite(300, 300, 'coin');
+		// this.coin = this.physics.add.sprite(300, 300, 'coin');
 
 		this.arrow = this.input.keyboard.createCursorKeys();
 
-		this.scoreText = this.add.text(20, 20, 'Score: ' + this.score, style);
+		// this.scoreText = this.add.text(20, 20, 'Score: ' + this.score, style);
 		// this.playerPosText = this.add.text(500, 20, 'Position: ' + this.player.x + ', ' + this.player.y, style)
 	}
 
 	update = () => {
 		if (this.player) {
 			// Collide with Coin
-			if (this.physics.overlap(this.player, this.coin)) {
-				hit(this.coin)
-				// Increase Score by 10
-				this.score += 10;
+			// if (this.physics.overlap(this.player, this.coin)) {
+			// 	hit(this.coin)
+			// 	// Increase Score by 10
+			// 	// this.score += 10;
 
-				this.scoreText.setText('Score: ' + this.score);
-			}
+			// 	// this.scoreText.setText('Score: ' + this.score);
+			// }
 			// Check if a direction is held down
 			if (this.arrow.right.isDown) {
 				this.player.x += 3;
@@ -95,7 +102,9 @@ class main_scene extends Phaser.Scene {
 			var x = this.player.x;
 			var y = this.player.y;
 			if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
-				this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y, rotation: this.player.rotation });
+				this.socket.emit('playerMovement', { 
+					x: this.player.x, y: this.player.y
+				});
 			}
 			
 			// save old position data
@@ -139,4 +148,8 @@ addOtherPlayers = (self, playerInfo) => {
 	const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'player')
 	otherPlayer.playerId = playerInfo.playerId
 	self.otherPlayers.add(otherPlayer)
+}
+
+addCoin = (self, coinInfo) => {
+	self.coin = self.physics.add.sprite(coinInfo.x, coinInfo.y, 'coin')
 }
