@@ -37,9 +37,9 @@ io.on('connection', function (socket) {
         // Emit message to all players to remove this player
         io.emit('disconnect', socket.id)
 
-        console.log('user disconnected');
+        console.log('a user disconnected');
     });
-    
+
     // when a player moves, update the player data
     socket.on('playerMovement', function (movementData) {
         players[socket.id].x = movementData.x;
